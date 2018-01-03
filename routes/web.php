@@ -13,4 +13,8 @@
 
 Route::get('/', 'ProductController@index');
 Route::get('/searchGet/{buscador}','ProductController@searchGet');
+Route::get('/deleteProducts','ProductController@showDeleteProducts');
+
+Route::post('/deleteProducts','ProductController@destroy');
+
 Route::post('/addProduct','ProductController@store');

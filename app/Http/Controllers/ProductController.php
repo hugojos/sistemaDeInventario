@@ -13,18 +13,24 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
      public function searchGet($buscador){
-        $post=Product::select('categories.title','name','products.id','price')->leftJoin('categories','category_id','=','categories.id')->where('name','LIKE',$buscador.'%')->get();
+        $post=Product::select('categories.title','name','products.id','price')
+                       ->leftJoin('categories','category_id','=','categories.id')
+                       ->where('name','LIKE',$buscador.'%')
+                       ->get();
        if (count($post)== 0) {
-         $post=Product::select('categories.title','name','products.id','price')->leftJoin('categories','category_id','=','categories.id')->where('name','LIKE','%'.$buscador.'%')->get();
+         $post=Product::select('categories.title','name','products.id','price')
+                        ->leftJoin('categories','category_id','=','categories.id')
+                        ->where('name','LIKE','%'.$buscador.'%')
+                        ->get();
        }
        return $post;
      }
 
     public function index()
     {
-        return view('welcome',['products'=>Product::select('id','name','price','category_id')
+        return view('welcome',['products'=>Product::all(),'category'=>Category::all()]);/*select('id','name','price','category_id')
                                           ->orderBy('name', 'ASC')
-                                          ->get(),'category'=>Category::all()]);
+                                          ->get(),'category'=>Category::all()]);*/
     }
     /**
      * Show the form for creating a new resource.
@@ -97,8 +103,16 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+     public function showDeleteProducts()
+     {
+         return view('deleteProducts ',['products'=>Product::all(),'category'=>Category::all()]);
+     }
+
+    public function destroy(Request $request)
     {
-        //
+
+
+        Product::find($request->input('id'))->delete();
+        return 'HOLA';
     }
 }
