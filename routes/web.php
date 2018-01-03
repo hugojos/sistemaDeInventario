@@ -11,6 +11,6 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'ProductController@index');
+Route::get('/searchGet/{buscador}','ProductController@searchGet');
+Route::post('/addProduct','ProductController@store');
