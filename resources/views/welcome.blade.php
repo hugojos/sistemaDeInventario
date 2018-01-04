@@ -21,7 +21,9 @@
             </div>
             <div class="col-md-4 col-sm-6">
               <div class="row">
-                <input type="text" class="form-control" name="" value="" id="buscador" placeholder="Buscar articulo...">
+                <div class="col">
+                  <input type="text" class="form-control" name="" value="" autofocus id="buscador" placeholder="Buscar articulo...">
+                </div>
               </div>
             </div>
           </div>

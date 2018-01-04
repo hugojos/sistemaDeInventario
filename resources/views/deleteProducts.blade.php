@@ -17,7 +17,7 @@
   </style>
   <div class="container bg-white">
     <div class="row">
-      <div class="col-12 text-center h1 mt-3">Consulta los precios</div>
+      <div class="col-12 text-center h1 mt-3">Eliminar producto</div>
     </div>
       <div class="row mt-5 mb-2 ">
         <div class="col-12 d-flex justify-content-between flex-wrap">
@@ -30,32 +30,12 @@
           </div>
           <div class="col-md-4 col-sm-6">
             <div class="row">
-              <form class="" action="index.html" method="post">
+              <form class="col" action="index.html" method="post">
                 <input type="text" class="form-control" name="" value="" id="buscador" placeholder="Buscar articulo..."  autofocus>
               </form>
             </div>
           </div>
         </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <form action="/addProduct" class="mt-2 w-100" id="form" style="display:none" method="post">
-          {{ csrf_field() }}
-          <div class="form-group d-flex">
-            <input type="text" name="name" class="form-control" placeholder="Nombre" id="name" value="">
-            <select class="form-control" name="category_id" id="category">
-              <option value="1" selected>CATEGORIA</option>
-              @foreach ($category as $key => $value)
-              <option value="{{$value->id}}">{{$value->title}}</option>
-              @endforeach
-            </select>
-            <input type="text" name="price" class="form-control" placeholder="Precio" id="price" value="">
-          </div>
-          <div class="form-group">
-            <input type="submit" class="mt-1 px-5 btn btn-success" id="añadirArticulo" name="" value="Enviar">
-          </div>
-        </form>
-      </div>
     </div>
     <div class="row">
       <div class="col">
@@ -71,7 +51,7 @@
                 <td>{{$value->id}}</td>
                 <td>{{$value->name}}</td>
                 <td>{{$value->category->title}}</td>
-                <td class="eliminar">${{$value->price}}<i class="fa fa-times" aria-hidden="true"></i></td>
+                <td class="eliminar">${{$value->price}}<i class="fa fa-times" class="delete"aria-hidden="true" title="Eliminar"></i></td>
               </tr>
             @endforeach
         </table>
@@ -85,7 +65,7 @@
 
         $botonEliminar.each(function(e){
           e = $(this);
-          $(this).click(function(){
+          $(this).on('click','i',function(){
             $.ajax({
               'type':'POST',
               'url':'/deleteProducts',
@@ -95,10 +75,66 @@
               }
             }).done(function(){
               e.parent().remove();
-              console.log('todo bien')
             })
           })
         });
 
+        var buscador = document.querySelector('#buscador'),
+            ul = document.querySelector('tbody'),
+            xhr = new XMLHttpRequest()
+            attach=$(ul).children().detach()
+            cross = $('<i class="fa fa-times" aria-hidden="true" title="Eliminar"></i>');
+            $(ul).append(attach)
+          buscador.addEventListener('input',function(event){
+            xhr.onreadystatechange = function(){
+              ul.innerHTML=""
+              if (this.readyState == 4) {
+                if (this.status == 200) {
+                  xhr.response.forEach(function (value, key){
+                    var li = document.createElement('tr');
+                    var a1 = document.createElement('td');
+                    var a2 = document.createElement('td');
+                    var a3 = document.createElement('td');
+                    var a4 = document.createElement('td');
+                    a1.append(document.innerHTML=value.id)
+                    a2.append(document.innerHTML=value.name)
+                    a3.append(document.innerHTML=value.title)
+                    a4.append(document.innerHTML='$'+value.price)
+                    cross.clone().appendTo(a4)
+                    a4.className = 'eliminar'
+                    li.append(a1);
+                    li.append(a2);
+                    li.append(a3);
+                    li.append(a4);
+                    ul.append(li)
+                  });
+                  $botonEliminar = $('td.eliminar')
+                  $botonEliminar.each(function(e){
+                    e = $(this);
+                    $(this).on('click','i',function(){
+                      $.ajax({
+                        'type':'POST',
+                        'url':'/deleteProducts',
+                        'data':{
+                          'id': e.siblings().first().text(),
+                          '_token': token
+                        }
+                      }).done(function(){
+                        e.parent().remove();
+                      })
+                    })
+                  });
+                }
+              }
+            };
+            xhr.open("GET","/searchGet/"+buscador.value, true);
+            xhr.responseType = 'json';
+            xhr.setRequestHeader('X-CSRF-TOKEN', token);
+            if (!buscador.value=="") {
+              xhr.send();
+            }else {
+              $(ul).append(attach);
+            }
+          })
   </script>
 @endsection
