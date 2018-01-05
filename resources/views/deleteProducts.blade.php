@@ -121,6 +121,11 @@
                         }
                       }).done(function(){
                         e.parent().remove();
+                        attach.each(function(i,a){
+                          if ($(a).find('td').first().text()==$(e).siblings().first().text()) {
+                            $(a).empty()
+                          }
+                        })
                       })
                     })
                   });
@@ -136,5 +141,6 @@
               $(ul).append(attach);
             }
           })
+          console.log(attach);
   </script>
 @endsection
