@@ -141,6 +141,5 @@
               $(ul).append(attach);
             }
           })
-          console.log(attach);
   </script>
 @endsection
